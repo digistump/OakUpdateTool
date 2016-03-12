@@ -195,7 +195,7 @@ class MyHttpChannel(HTTPChannel):
 		if(platform.system() == "Windows"):
 			sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 1024)
 			sock.setsockopt(socket.SOL_SOCKET, socket.SO_LINGER, 0)
-		else
+		else:
 			# Don't let closed sockets hang out for long
 			sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_LINGER2, 2)
 			# TCP_USER_TIMEOUT closes connections if packets aren't ACK'ed
