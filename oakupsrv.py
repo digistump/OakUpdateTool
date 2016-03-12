@@ -190,7 +190,12 @@ class MyHttpChannel(HTTPChannel):
 		self.setTimeout(10)
 		# Don't let data accumulate, send ASAP
 		sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-		if(platform.system() == "Linux"):
+		#if(platform.system() == "Linux"):
+
+		if(platform.system() == "Windows"):
+			sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 1024)
+			sock.setsockopt(socket.SOL_SOCKET, socket.SO_LINGER, 0)
+		else
 			# Don't let closed sockets hang out for long
 			sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_LINGER2, 2)
 			# TCP_USER_TIMEOUT closes connections if packets aren't ACK'ed
@@ -200,10 +205,6 @@ class MyHttpChannel(HTTPChannel):
 			sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPINTVL, 3)
 
 			sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_MAXSEG, 600)
-		elif(platform.system() == "Windows"):
-			sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 1024)
-			sock.setsockopt(socket.SOL_SOCKET, socket.SO_LINGER, 0)
-		
 		# After KEEPINTVL seconds, KEEPCNT packets will be sent
 		sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
 		#print sock
