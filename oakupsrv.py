@@ -1,4 +1,8 @@
-import  os, time, socket, datetime, platform, urllib2, ssl
+import ssl
+ssl.PROTOCOL_SSLv23 = ssl.PROTOCOL_TLSv1
+
+
+import  os, time, socket, datetime, platform, urllib2
 
 from OpenSSL import crypto, SSL
 
@@ -9,6 +13,8 @@ from twisted.web.resource import Resource
 from twisted.web.static import File
 from twisted.web.server import NOT_DONE_YET
 from twisted.web.resource import NoResource
+
+
 
 early_failures = 0
 firmware_send_count = 0
