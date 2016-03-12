@@ -1,8 +1,4 @@
-import ssl
-ssl.PROTOCOL_SSLv23 = ssl.PROTOCOL_TLSv1
-
-
-import  os, time, socket, datetime, platform, urllib2
+import  os, time, socket, datetime, platform, urllib2, ssl
 
 from OpenSSL import crypto, SSL
 
@@ -89,7 +85,7 @@ def fetchFile(url, fname):
 	try:
 		ssl_ctx = ssl.create_default_context()
 		ssl_ctx.check_hostname = False
-		ssl_ctx.verify_mode = ssl.CERT_REQUIRED
+		ssl_ctx.verify_mode = ssl.CERT_NONE
 	except Exception:
 		pass
 	print "Fetching "+url
