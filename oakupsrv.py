@@ -197,18 +197,26 @@ class MyHttpChannel(HTTPChannel):
 		if(platform.system() == "Windows"):
 			sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 1024)
 			sock.setsockopt(socket.SOL_SOCKET, socket.SO_LINGER, 0)
+			# After KEEPINTVL seconds, KEEPCNT packets will be sent
+			sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
 		else:
-			# Don't let closed sockets hang out for long
-			sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_LINGER2, 2)
-			# TCP_USER_TIMEOUT closes connections if packets aren't ACK'ed
-			# 18 = TCP_USER_TIMEOUT, open bug in python to expose this from "socket"
-			sock.setsockopt(socket.IPPROTO_TCP, 18, 10*1000)
-			sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPCNT, 3)
-			sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPINTVL, 3)
+			if(platform.system() == "Linux"):
+				# Don't let closed sockets hang out for long
+				sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_LINGER2, 2)
+				# TCP_USER_TIMEOUT closes connections if packets aren't ACK'ed
+				# 18 = TCP_USER_TIMEOUT, open bug in python to expose this from "socket"
+				sock.setsockopt(socket.IPPROTO_TCP, 18, 10*1000)
+				sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPCNT, 3)
+				sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPINTVL, 3)
 
 			sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_MAXSEG, 600)
-		# After KEEPINTVL seconds, KEEPCNT packets will be sent
-		sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
+			# After KEEPINTVL seconds, KEEPCNT packets will be sent
+			sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
+			if(platform.system() == "Darwin"):
+				if hasattr(socket, 'TCP_KEEPCNT'):
+					sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPCNT, 3)
+				if hasattr(socket, 'TCP_KEEPINTVL'):	
+					sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPINTVL, 3)
 		#print sock
 		self.transport.startTLS(self.ssl_context)
 	def connectionLost(self, reason):
